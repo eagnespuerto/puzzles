@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: puzzles
+    name: mobiletathampuzzles
     runtime: static
     staticPublishPath: ./public
     buildCommand: ""
