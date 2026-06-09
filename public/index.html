@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1c2733">
-<title>How to Play &middot; Tatham's Puzzles</title>
+<title>Mobile Tatham Puzzles</title>
 <style>
   :root{
     --paper:#f7f5ef; --paper2:#fffdf8; --ink:#1c2733; --ink-soft:#4a5763;
@@ -136,8 +136,8 @@
 <div class="wrap">
   <header>
     <p class="eyebrow">How to play</p>
-    <h1>Simon Tatham's Puzzle Collection</h1>
-    <p class="sub">Quick rules and controls for every puzzle in the collection. Tap any puzzle for the full briefing, then play it right here — every game runs locally, no connection needed.</p>
+    <h1>Mobile Tatham Puzzles</h1>
+    <p class="sub">Simon Tatham's Puzzles, but more mobile-friendly and fluid.</p>
   </header>
 
   <div class="controls">
@@ -224,7 +224,7 @@ function openSheet(p){
     p.paras.map(t=>`<p>${t}</p>`).join('')+`</div>`;
   body.scrollTop=0;
   const playBtn=document.getElementById('s-play');
-  if(p.play){playBtn.style.display='';playBtn.href=p.play;playBtn.removeAttribute('target');}
+  if(p.play){playBtn.style.display='';playBtn.href='play.html?game='+encodeURIComponent(p.key);playBtn.removeAttribute('target');}
   else{playBtn.style.display='none';}
   document.getElementById('s-man').href=p.manual;
   bg.classList.add('open');sheet.classList.add('open');document.body.classList.add('locked');

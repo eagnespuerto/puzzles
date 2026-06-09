@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1c2733">
+<title>Play · Mobile Tatham Puzzles</title>
+<style>
+  :root{
+    --paper:#f7f5ef; --paper2:#fffdf8; --ink:#1c2733; --ink-soft:#4a5763;
+    --line:#d7d2c4; --blue:#2f6db0; --blue-deep:#235488;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);
+    font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:14px clamp(12px,3vw,22px) 40px}
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--blue-deep);
+    text-decoration:none;font-weight:600;font-size:.95rem;padding:6px 10px;
+    border-radius:8px;border:1px solid var(--line);background:var(--paper2)}
+  .back:hover{background:#fff}
+  h1{font-size:1.4rem;margin:0;flex:1;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tag{font-size:.72rem;letter-spacing:.08em;font-weight:700;
+    color:var(--blue-deep);text-transform:uppercase}
+  .frame-wrap{background:var(--paper2);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+  iframe{display:block;width:100%;height:min(78vh,720px);border:0;background:#fff}
+  .help{margin-top:22px;background:var(--paper2);border:1px solid var(--line);
+    border-radius:12px;padding:18px 20px}
+  .help h2{margin:0 0 6px;font-size:1.1rem}
+  .help .lead{margin:0 0 14px;color:var(--ink-soft)}
+  .help h3{margin:18px 0 6px;font-size:.95rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+  .help p{margin:0 0 10px}
+  .manual{display:inline-block;margin-top:8px;color:var(--blue-deep);font-weight:600}
+  .err{padding:30px;text-align:center;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="index.html" aria-label="Back to all puzzles">&larr; All puzzles</a>
+    <h1 id="title">Loading&hellip;</h1>
+  </div>
+  <div id="game" class="frame-wrap"></div>
+  <section class="help" id="help" hidden>
+    <span class="tag" id="cat"></span>
+    <h2 id="name"></h2>
+    <p class="lead" id="desc"></p>
+    <h3>Rules &amp; controls</h3>
+    <div id="paras"></div>
+    <a class="manual" id="manual" target="_blank" rel="noopener">Full manual &rarr;</a>
+  </section>
+  <div id="err" class="err" hidden></div>
+</div>
+<script>
+const params = new URLSearchParams(location.search);
+const key = params.get('game');
+const gameBox = document.getElementById('game');
+const errBox = document.getElementById('err');
+function fail(msg){
+  gameBox.style.display='none';
+  errBox.hidden=false;
+  errBox.innerHTML = msg + ' <a href="index.html">Back to all puzzles</a>.';
+  document.getElementById('title').textContent='Not found';
+}
+if(!key){ fail('No puzzle selected.'); }
+else {
+  fetch('index.html').then(r=>r.text()).then(html=>{
+    const m = html.match(/const PUZZLES = (\[[\s\S]*?\]);/);
+    if(!m) throw new Error('catalog missing');
+    const puzzles = JSON.parse(m[1]);
+    const p = puzzles.find(x=>x.key===key);
+    if(!p || !p.play) return fail('Unknown puzzle "'+key+'".');
+    document.title = p.name + ' · Mobile Tatham Puzzles';
+    document.getElementById('title').textContent = p.name;
+    const iframe = document.createElement('iframe');
+    iframe.src = 'puzzles-app/' + p.play;
+    iframe.title = p.name;
+    iframe.allow = 'fullscreen';
+    gameBox.appendChild(iframe);
+    document.getElementById('cat').textContent = p.cat;
+    document.getElementById('name').textContent = p.name;
+    document.getElementById('desc').textContent = p.desc;
+    const paras = document.getElementById('paras');
+    p.paras.forEach(t=>{const el=document.createElement('p');el.textContent=t;paras.appendChild(el);});
+    const man = document.getElementById('manual');
+    if(p.manual){ man.href = p.manual; } else { man.style.display='none'; }
+    document.getElementById('help').hidden = false;
+  }).catch(e=>{ console.error(e); fail('Could not load puzzle catalog.'); });
+}
+</script>
+</body>
+</html>
