@@ -66,10 +66,7 @@ function fail(msg){
 }
 if(!key){ fail('No puzzle selected.'); }
 else {
-  fetch('index.html').then(r=>r.text()).then(html=>{
-    const m = html.match(/const PUZZLES = (\[[\s\S]*?\]);/);
-    if(!m) throw new Error('catalog missing');
-    const puzzles = JSON.parse(m[1]);
+  fetch('puzzles.json').then(r=>r.json()).then(puzzles=>{
     const p = puzzles.find(x=>x.key===key);
     if(!p || !p.play) return fail('Unknown puzzle "'+key+'".');
     document.title = p.name + ' · Mobile Tatham Puzzles';

@@ -156,3 +156,4 @@ include/
 /unfinished/*.exe
 /*.desktop
 desktop.ini
+.claude/
